@@ -1,0 +1,41 @@
+---
+
+- hosts: rails
+  remote_user: app
+  tasks:
+
+    - name: Clone codebase
+      git: repo=https://github.com/open-source-affiliate/open-source-affiliate-io
+           dest=/var/www/myapp/application/public
+           version=master
+           update=yes
+           force=yes
+
+    - name: Remove files and directories to be symlinked
+      file: path=/var/www/myapp/application/{{ item }}
+            state=absent
+      with_items:
+        - log
+        - tmp
+
+    - name: Symlink shared directories
+      file: src=/var/www/myapp/shared/{{ item }}
+            dest=/var/www/myapp/application/{{ item }}
+            state=link
+      with_items:
+        - log
+        - tmp
+
+    - name: Check bundle
+      shell: bundle check
+      failed_when: false
+      changed_when: false
+      register: check_bundle
+      args:
+        chdir: /var/www/myapp/application
+
+    - name: Update bundle
+      shell: bundle install --without development test && rbenv rehash
+      when: check_bundle.rc != 0
+      args:
+        chdir: /var/www/myapp/application
