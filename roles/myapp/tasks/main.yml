@@ -80,9 +80,3 @@
   copy: src=sudoers
         dest=/etc/sudoers.d/myapp
 
-- name: Copy deploy script
-  copy: src=deploy-myapp
-        dest=/home/app/deploy-myapp
-        owner=app
-        group=app
-        mode=0755

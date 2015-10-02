@@ -1,6 +1,6 @@
 ---
 
-- hosts: rails
+- hosts: static
   remote_user: app
   tasks:
 
@@ -25,17 +25,3 @@
       with_items:
         - log
         - tmp
-
-    - name: Check bundle
-      shell: bundle check
-      failed_when: false
-      changed_when: false
-      register: check_bundle
-      args:
-        chdir: /var/www/myapp/application
-
-    - name: Update bundle
-      shell: bundle install --without development test && rbenv rehash
-      when: check_bundle.rc != 0
-      args:
-        chdir: /var/www/myapp/application
