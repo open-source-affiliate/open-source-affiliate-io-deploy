@@ -11,15 +11,7 @@ server {
   client_max_body_size 4G;
   keepalive_timeout 5;
   access_log /var/log/nginx/access.myapp.log;
-
-  location ~ ^/assets/ {
-    root /var/www/myapp/application/public;
-    gzip_static on;
-    expires max;
-    add_header Cache-Control public;
-    add_header ETag "";
-    break;
-  }
+  sendfile off;
 
   error_page 502 = @maintenance;
 
